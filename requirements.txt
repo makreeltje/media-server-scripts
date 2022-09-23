@@ -1,4 +1,3 @@
-pandas
-termcolor
 requests
 plexapi
+urllib3
