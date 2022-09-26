@@ -9,27 +9,34 @@ from __future__ import print_function
 from __future__ import unicode_literals
 
 import os
-import shutil
 import sys
-from builtins import input
-from builtins import object
-from sys import exit
+import time
+from dotenv import load_dotenv
+# import shutil
+
+
+# from builtins import input
+# from builtins import object
+# from sys import exit
 
 import requests
-from requests import Session
-from datetime import datetime
-from plexapi.server import PlexServer, CONFIG
-from os import environ
+# from requests import Session
+# from datetime import datetime
+# from plexapi.server import PlexServer, CONFIG
+
+load_dotenv(dotenv_path='./.env')
 
 # EDIT PARAMETERS IN .env FILE #
-PLEX_URL = environ.get('PLEX_URL')
-PLEX_TOKEN = environ.get('PLEX_TOKEN')
-RADARR_URL = environ.get('RADARR_URL')
-RADARR_APIKEY = environ.get('RADARR_APIKEY')
-SONARR_URL = environ.get('SONARR_URL')
-SONARR_APIKEY = environ.get('SONARR_APIKEY')
-TAUTULLI_URL = environ.get('TAUTULLI_URL')
-TAUTULLI_APIKEY = environ.get('TAUTULLI_APIKEY')
+
+PLEX_URL = os.getenv('PLEX_URL')
+PLEX_TOKEN = os.getenv('PLEX_TOKEN')
+RADARR_URL = os.getenv('RADARR_URL')
+RADARR_APIKEY = os.getenv('RADARR_APIKEY')
+SONARR_URL = os.getenv('SONARR_URL')
+SONARR_APIKEY = os.getenv('SONARR_APIKEY')
+TAUTULLI_URL = os.getenv('TAUTULLI_URL')
+TAUTULLI_APIKEY = os.getenv('TAUTULLI_APIKEY')
+
 
 LIBRARY_NAMES = ['Movies', 'TV Shows', 'Animation', 'Series']
 
@@ -39,80 +46,23 @@ DRY_RUN = True
 
 # CODE BELOW #
 
-class UserHIS(object):
-    def __init__(self, data=None):
-        d = data or {}
-        self.rating_key = d['rating_key']
-
-
-class METAINFO(object):
-    def __init__(self, data=None):
-        d = data or {}
-        self.title = d['title']
-        media_info = d['media_info'][0]
-        parts = media_info['parts'][0]
-        self.file = parts['file']
-
-
-def get_metadata(rating_key):
-    payload = {'apikey': TAUTULLI_APIKEY,
-               'cmd': 'get_metadata',
-               'rating_key': rating_key,
-               'media_info': True}
+def get_radarr_movies():
+    payload = {
+        'apikey': RADARR_APIKEY
+    }
 
     try:
-        r = requests.get(TAUTULLI_URL.rstrip('/') + '/api/v2', params=payload)
+        r = requests.get(RADARR_URL.rstrip('/') + '/api/v3/movie', params=payload)
         response = r.json()
 
-        res_data = response['response']['data']
-        print(res_data)
-        if res_data['library_name'] in LIBRARY_NAMES:
-            return METAINFO(res_data)
+        return response
     except Exception as e:
-        sys.stderr.write("Tautulli API 'get_metadata' request failed: {0}.".format(e))
-        pass
+        sys.stderr.write("Radarr API 'get_radarr_movies' request failed: {0}".format(e))
 
 
-def get_history(user, start, length):
-    payload = {'apikey': TAUTULLI_APIKEY,
-               'cmd': 'get_history',
-               'user': user,
-               'media_type': 'movie',
-               'start': start,
-               'length': length}
 
-    try:
-        r = requests.get(TAUTULLI_URL.rstrip('/') + '/api/v2', params=payload)
-        response = r.json()
-
-        res_data = response['response']['data']['data']
-        print(res_data)
-        return [UserHIS(data=d) for d in res_data if d['watched_status'] == 1]
-
-    except Exception as e:
-        sys.stderr.write("Tautulli API 'get_history' request failed: {0}.".format(e))
-
-
-def delete_files(tmp_lst):
-    del_file = input('Delete all watched files? (y/n): ').lower()
-    if del_file == 'y':
-        for x in tmp_lst:
-            print('Removing {}'.format(os.path.dirname(x)))
-            shutil.rmtree(os.path.dirname(x))
-    else:
-        print('Ok. Doing nothing.')
-
-
-movie_dict = {}
-movie_lst = []
-delete_lst = []
-
-count = 25
-for user in USER_LST:
-    start = 0
-    while True:
-        history = get_history(user, start, count)
-
+get_radarr_movies()
+time.sleep(5)
 
 # def execute_script():
 #     print(colored('This is a script that removes old media from your Plex library trough Radarr and Sonarr based on '
