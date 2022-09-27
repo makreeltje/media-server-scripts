@@ -87,7 +87,7 @@ def get_sonarr_episodes(seriesId, seasonNumber):
 
         return response
     except Exception as e:
-        sys.stderr.write("Sonarr API 'get_sonarr_series' request failed: {0}".format(e))
+        sys.stderr.write("Sonarr API 'get_sonarr_episode' request failed: {0}".format(e))
 
 def get_tautulli_history(start):
     payload = {
