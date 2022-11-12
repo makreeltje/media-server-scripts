@@ -1,3 +1,4 @@
 requests
 plexapi
 urllib3
+python-dotenv

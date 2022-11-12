@@ -2,111 +2,98 @@
 # -*- coding: utf-8 -*-
 
 """Delete media from server based on time last watched, or if never played based on time added based on threshold
-
 """
 
 from __future__ import print_function
 from __future__ import unicode_literals
 
 import os
+import shutil
 import sys
-import time
-from dotenv import load_dotenv
-# import shutil
-
-
-# from builtins import input
-# from builtins import object
-# from sys import exit
+from builtins import input
+from builtins import object
+from sys import exit
 
 import requests
+from requests import Session
+from datetime import datetime
+from plexapi.server import PlexServer, CONFIG
+from os import environ
+from dotenv import load_dotenv
 
-# from requests import Session
-# from datetime import datetime
-# from plexapi.server import PlexServer, CONFIG
-
-load_dotenv(dotenv_path='./.env')
+load_dotenv()
 
 # EDIT PARAMETERS IN .env FILE #
-
-PLEX_URL = os.getenv('PLEX_URL')
-PLEX_TOKEN = os.getenv('PLEX_TOKEN')
-RADARR_URL = os.getenv('RADARR_URL')
-RADARR_APIKEY = os.getenv('RADARR_APIKEY')
-SONARR_URL = os.getenv('SONARR_URL')
-SONARR_APIKEY = os.getenv('SONARR_APIKEY')
-TAUTULLI_URL = os.getenv('TAUTULLI_URL')
-TAUTULLI_APIKEY = os.getenv('TAUTULLI_APIKEY')
+PLEX_URL = environ.get('PLEX_URL')
+PLEX_TOKEN = environ.get('PLEX_TOKEN')
+RADARR_URL = environ.get('RADARR_URL')
+RADARR_APIKEY = environ.get('RADARR_APIKEY')
+SONARR_URL = environ.get('SONARR_URL')
+SONARR_APIKEY = environ.get('SONARR_APIKEY')
+TAUTULLI_URL = environ.get('TAUTULLI_URL')
+TAUTULLI_APIKEY = environ.get('TAUTULLI_APIKEY')
 
 LIBRARY_NAMES = ['Movies', 'TV Shows', 'Animation', 'Series']
 
 REMOVE_LIMIT = 30  # Days
 DRY_RUN = True
 
+headers = {
+    'Accept': 'application/json'
+}
+
 
 # CODE BELOW #
 
-def get_radarr_movies():
+def get_plex_libraries():
     payload = {
-        'apikey': RADARR_APIKEY
+        'X-Plex-Token': PLEX_TOKEN
     }
 
     try:
-        r = requests.get(RADARR_URL.rstrip('/') + '/api/v3/movie', params=payload)
+        r = requests.get(PLEX_URL.rstrip('/') + '/library/sections/', params=payload, headers=headers)
         response = r.json()
 
-        return response
+        res_data = response['MediaContainer']['Directory']
+        return res_data
     except Exception as e:
-        sys.stderr.write("Radarr API 'get_radarr_movies' request failed: {0}".format(e))
+        sys.stderr.write("\N{cross mark} Plex API 'get_libraries' request failed: {0}".format(e))
+        pass
 
 
-def get_sonarr_series():
-    payload = {
-        'apikey': SONARR_APIKEY
+def parse_plex_library_result(payload):
+    result = {
+        'library_id': payload['key'],
+        'type': payload['type'],
+        'name': payload['title']
     }
 
-    try:
-        r = requests.get(SONARR_URL.rstrip('/') + '/api/v3/series', params=payload)
-        response = r.json()
-
-        return response
-    except Exception as e:
-        sys.stderr.write("Sonarr API 'get_sonarr_series' request failed: {0}".format(e))
+    return result
 
 
-def get_sonarr_episodes(seriesId, seasonNumber):
-    payload = {
-        'apikey': SONARR_APIKEY,
-        'seriesId': seriesId,
-        'seasonNumber': seasonNumber
-    }
-
-    try:
-        r = requests.get(SONARR_URL.rstrip('/') + '/api/v3/episode', params=payload)
-        response = r.json()
-
-        return response
-    except Exception as e:
-        sys.stderr.write("Sonarr API 'get_sonarr_episode' request failed: {0}".format(e))
-
-def get_tautulli_history(start):
-    payload = {
-        'apikey': TAUTULLI_APIKEY,
-        # 'rating_key': rating_key,
-        'cmd': 'get_history',
-        'start': start,
-        'length': 25
-    }
+def get_metadata(rating_key):
+    payload = {'apikey': TAUTULLI_APIKEY,
+               'cmd': 'get_metadata',
+               'rating_key': rating_key,
+               'media_info': True}
 
     try:
         r = requests.get(TAUTULLI_URL.rstrip('/') + '/api/v2', params=payload)
         response = r.json()
 
-        res_data = response['response']['data']['data']
-        return res_data
+        res_data = response['response']['data']
+        print(res_data)
     except Exception as e:
-        sys.stderr.write("Tautulli API 'get_tautulli_history' request failed: {0}".format(e))
+        sys.stderr.write("Tautulli API 'get_metadata' request failed: {0}.".format(e))
+        pass
 
 
-print(get_sonarr_episodes(2,1))
-time.sleep(5)
+print("Plex data")
+print("URL  : " + str(PLEX_URL))
+print("TOKEN: " + str(PLEX_TOKEN))
+
+plex_libraries = get_plex_libraries()
+
+for library in plex_libraries:
+    print(parse_plex_library_result(library))
+
