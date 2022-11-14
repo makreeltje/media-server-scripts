@@ -7,18 +7,9 @@
 from __future__ import print_function
 from __future__ import unicode_literals
 
-import os
-import shutil
-import sys
 import logging
-from builtins import input
-from builtins import object
-from sys import exit
 
 import requests
-from requests import Session
-from datetime import datetime
-from plexapi.server import PlexServer, CONFIG
 from os import environ
 from dotenv import load_dotenv
 
@@ -62,7 +53,7 @@ def get_plex_libraries():
         logging.debug('get_plex_libraries response: ' + str(response))
 
         res_data = response['MediaContainer']['Directory']
-        logging.info('✅ Retrieved Plex libraries')
+        logging.info('✅ Retrieved {} Plex libraries'.format(len(res_data)))
         return res_data
     except Exception as e:
         logging.error("❌ Plex API 'get_libraries' request failed: {0}".format(e))
@@ -78,6 +69,43 @@ def parse_plex_library_result(payload):
     return result
 
 
+def get_radarr_movies():
+    logging.info('📶 Retrieving Radarr movies from Radarr endpoint')
+
+    payload = {
+        'apikey': RADARR_APIKEY,
+    }
+
+    try:
+        r = requests.get(RADARR_URL.rstrip('/') + '/api/v3/movie', params=payload)
+        response = r.json()
+        logging.debug('get_radarr_movies response: ' + str(response))
+
+        logging.info('✅ Retrieved {} Radarr movies'.format(len(response)))
+        return response
+    except Exception as e:
+        logging.error("❌ Radarr API 'movie' request failed: {0}".format(e))
+
+
+def get_sonarr_series():
+    logging.info('📶 Retrieving Sonarr series from Sonarr endpoint')
+
+    payload = {
+        'apikey': SONARR_APIKEY,
+    }
+
+    try:
+        r = requests.get(SONARR_URL.rstrip('/') + '/api/v3/series', params=payload)
+        response = r.json()
+        logging.debug('get_sonarr_series response: ' + str(response))
+
+        logging.info('✅ Retrieved {} Sonarr series'.format(len(response)))
+        return response
+    except Exception as e:
+        logging.error("❌ Sonarr API 'series' request failed: {0}".format(e))
+
+
+
 parsed_plex_libraries = []
 plex_libraries = get_plex_libraries()
 
@@ -87,7 +115,9 @@ for library in plex_libraries:
     parsed_plex_libraries.append(parse_plex_library_result(library))
 
 logging.debug('parse_plex_library_result response: ' + str(parsed_plex_libraries))
-logging.info("✅ Parsed 'get_plex_libraries' result")
+logging.info("✅ Parsed {} 'get_plex_libraries' result".format(len(plex_libraries)))
 
-print(parsed_plex_libraries)
+radarr_movie_list = get_radarr_movies()
+sonarr_series_list = get_sonarr_series()
+
 
