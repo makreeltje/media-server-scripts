@@ -56,7 +56,7 @@ def get_plex_libraries():
         logging.info('✅ Retrieved {} Plex libraries'.format(len(res_data)))
         return res_data
     except Exception as e:
-        logging.error("❌ Plex API 'get_libraries' request failed: {0}".format(e))
+        logging.error('❌ Plex API \'get_libraries\' request failed: {0}'.format(e))
 
 
 def parse_plex_library_result(payload):
@@ -84,7 +84,7 @@ def get_radarr_movies():
         logging.info('✅ Retrieved {} Radarr movies'.format(len(response)))
         return response
     except Exception as e:
-        logging.error("❌ Radarr API 'movie' request failed: {0}".format(e))
+        logging.error('❌ Radarr API \'movie\' request failed: {0}'.format(e))
 
 
 def get_sonarr_series():
@@ -102,14 +102,48 @@ def get_sonarr_series():
         logging.info('✅ Retrieved {} Sonarr series'.format(len(response)))
         return response
     except Exception as e:
-        logging.error("❌ Sonarr API 'series' request failed: {0}".format(e))
+        logging.error('❌ Sonarr API \'series\' request failed: {0}'.format(e))
 
+
+def get_tautulli_libraries_table():
+    logging.info('📶 Retrieving Tautulli Libraries Table from Tautulli endpoint')
+
+    payload = {
+        'apikey': TAUTULLI_APIKEY,
+        'cmd': 'get_libraries_table'
+    }
+
+    try:
+        r = requests.get(TAUTULLI_URL.rstrip('/') + '/api/v2', params=payload)
+        response = r.json()
+
+        res_data = response['response']['data']['data']
+        logging.debug('get_tautulli_libraries_table response: ' + str(res_data))
+
+        logging.info('✅ Retrieved {} Tautulli libraries table'.format(len(res_data)))
+        return res_data
+    except Exception as e:
+        logging.error("❌ Tautulli API 'get_libraries_table' request failed: {0}".format(e))
+
+
+def parse_tautulli_libraries_table(payload):
+    result = {
+        'section_name': payload['section_name'],
+        'section_id': payload['section_id'],
+        'rating_key': payload['rating_key'],
+        'section_type': payload['section_type'],
+    }
+
+    if result['section_type'] == 'live':
+        logging.warning('⚠️ Skipping live section: {}'.format(result['section_name']))
+        return None
+    return result
 
 
 parsed_plex_libraries = []
 plex_libraries = get_plex_libraries()
 
-logging.info("📶 Parsing 'get_plex_libraries' result")
+logging.info('📶 Parsing \'get_plex_libraries\' result')
 
 for library in plex_libraries:
     parsed_plex_libraries.append(parse_plex_library_result(library))
@@ -119,5 +153,20 @@ logging.info("✅ Parsed {} 'get_plex_libraries' result".format(len(plex_librari
 
 radarr_movie_list = get_radarr_movies()
 sonarr_series_list = get_sonarr_series()
+tautulli_libraries_table = get_tautulli_libraries_table()
+
+parsed_tautulli_libraries_table = []
+
+logging.info("📶 Parsing 'get_tautulli_libraries_table' result")
+
+for library in tautulli_libraries_table:
+    result = parse_tautulli_libraries_table(library)
+    if result is not None:
+        parsed_tautulli_libraries_table.append(result)
+
+logging.debug('parse_tautulli_libraries_table response: ' + str(parsed_tautulli_libraries_table))
+logging.info("✅ Parsed {} 'get_tautulli_libraries_table' result".format(len(parsed_tautulli_libraries_table)))
+
+
 
 
