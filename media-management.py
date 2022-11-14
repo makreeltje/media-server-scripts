@@ -10,6 +10,7 @@ from __future__ import unicode_literals
 import os
 import shutil
 import sys
+import logging
 from builtins import input
 from builtins import object
 from sys import exit
@@ -42,10 +43,15 @@ headers = {
     'Accept': 'application/json'
 }
 
+logging.root.setLevel(logging.NOTSET)
+logging.basicConfig(level=logging.NOTSET)
 
 # CODE BELOW #
 
 def get_plex_libraries():
+    logging.info('Retrieving Plex libraries from Plex endpoint')
+
+
     payload = {
         'X-Plex-Token': PLEX_TOKEN
     }
@@ -53,12 +59,13 @@ def get_plex_libraries():
     try:
         r = requests.get(PLEX_URL.rstrip('/') + '/library/sections/', params=payload, headers=headers)
         response = r.json()
+        logging.debug(response)
 
         res_data = response['MediaContainer']['Directory']
+        logging.info('\N{check mark} Retrieved Plex libraries')
         return res_data
     except Exception as e:
-        sys.stderr.write("\N{cross mark} Plex API 'get_libraries' request failed: {0}".format(e))
-        pass
+        logging.error("\N{cross mark} Plex API 'get_libraries' request failed: {0}".format(e))
 
 
 def parse_plex_library_result(payload):
@@ -71,29 +78,11 @@ def parse_plex_library_result(payload):
     return result
 
 
-def get_metadata(rating_key):
-    payload = {'apikey': TAUTULLI_APIKEY,
-               'cmd': 'get_metadata',
-               'rating_key': rating_key,
-               'media_info': True}
-
-    try:
-        r = requests.get(TAUTULLI_URL.rstrip('/') + '/api/v2', params=payload)
-        response = r.json()
-
-        res_data = response['response']['data']
-        print(res_data)
-    except Exception as e:
-        sys.stderr.write("Tautulli API 'get_metadata' request failed: {0}.".format(e))
-        pass
-
-
-print("Plex data")
-print("URL  : " + str(PLEX_URL))
-print("TOKEN: " + str(PLEX_TOKEN))
-
+parsed_plex_libraries = []
 plex_libraries = get_plex_libraries()
 
 for library in plex_libraries:
-    print(parse_plex_library_result(library))
+    parsed_plex_libraries.append(parse_plex_library_result(library))
+
+print(parsed_plex_libraries)
 
