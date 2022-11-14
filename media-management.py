@@ -44,12 +44,12 @@ headers = {
 }
 
 logging.root.setLevel(logging.NOTSET)
-logging.basicConfig(level=logging.NOTSET)
+logging.basicConfig(level=logging.INFO)
 
 # CODE BELOW #
 
 def get_plex_libraries():
-    logging.info('Retrieving Plex libraries from Plex endpoint')
+    logging.info('📶 Retrieving Plex libraries from Plex endpoint')
 
 
     payload = {
@@ -59,13 +59,13 @@ def get_plex_libraries():
     try:
         r = requests.get(PLEX_URL.rstrip('/') + '/library/sections/', params=payload, headers=headers)
         response = r.json()
-        logging.debug(response)
+        logging.debug('get_plex_libraries response: ' + str(response))
 
         res_data = response['MediaContainer']['Directory']
-        logging.info('\N{check mark} Retrieved Plex libraries')
+        logging.info('✅ Retrieved Plex libraries')
         return res_data
     except Exception as e:
-        logging.error("\N{cross mark} Plex API 'get_libraries' request failed: {0}".format(e))
+        logging.error("❌ Plex API 'get_libraries' request failed: {0}".format(e))
 
 
 def parse_plex_library_result(payload):
@@ -81,8 +81,13 @@ def parse_plex_library_result(payload):
 parsed_plex_libraries = []
 plex_libraries = get_plex_libraries()
 
+logging.info("📶 Parsing 'get_plex_libraries' result")
+
 for library in plex_libraries:
     parsed_plex_libraries.append(parse_plex_library_result(library))
+
+logging.debug('parse_plex_library_result response: ' + str(parsed_plex_libraries))
+logging.info("✅ Parsed 'get_plex_libraries' result")
 
 print(parsed_plex_libraries)
 
