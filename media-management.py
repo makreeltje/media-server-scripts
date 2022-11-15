@@ -22,6 +22,8 @@ RADARR_URL = environ.get('RADARR_URL')
 RADARR_APIKEY = environ.get('RADARR_APIKEY')
 SONARR_URL = environ.get('SONARR_URL')
 SONARR_APIKEY = environ.get('SONARR_APIKEY')
+OVERSEERR_URL = environ.get('OVERSEERR_URL')
+OVERSEERR_APIKEY = environ.get('OVERSEERR_APIKEY')
 TAUTULLI_URL = environ.get('TAUTULLI_URL')
 TAUTULLI_APIKEY = environ.get('TAUTULLI_APIKEY')
 
@@ -53,7 +55,10 @@ def get_plex_libraries():
         logging.debug('get_plex_libraries response: ' + str(response))
 
         res_data = response['MediaContainer']['Directory']
-        logging.info('✅ Retrieved {} Plex libraries'.format(len(res_data)))
+        if len(res_data) == 0:
+            logging.warning('⚠️ No Plex libraries found')
+        else:
+            logging.info('✅ Retrieved {} Plex libraries'.format(len(res_data)))
         return res_data
     except Exception as e:
         logging.error('❌ Plex API \'get_libraries\' request failed: {0}'.format(e))
@@ -81,7 +86,11 @@ def get_radarr_movies():
         response = r.json()
         logging.debug('get_radarr_movies response: ' + str(response))
 
-        logging.info('✅ Retrieved {} Radarr movies'.format(len(response)))
+        if len(response) == 0:
+            logging.warning('⚠️ No Radarr movies found')
+        else:
+            logging.info('✅ Retrieved {} Radarr movies'.format(len(response)))
+
         return response
     except Exception as e:
         logging.error('❌ Radarr API \'movie\' request failed: {0}'.format(e))
@@ -99,14 +108,41 @@ def get_sonarr_series():
         response = r.json()
         logging.debug('get_sonarr_series response: ' + str(response))
 
-        logging.info('✅ Retrieved {} Sonarr series'.format(len(response)))
+        if len(response) == 0:
+            logging.warning('⚠️ No Sonarr series found')
+        else:
+            logging.info('✅ Retrieved {} Sonarr series'.format(len(response)))
+
         return response
     except Exception as e:
         logging.error('❌ Sonarr API \'series\' request failed: {0}'.format(e))
 
 
+def get_overseerr_requests():
+    logging.info('📶 Retrieving Overseerr media from Overseerr endpoint')
+
+    payload = {
+        'take': 20,
+        'skip': 0,
+        'sort': 'added'
+    }
+
+    headers = {
+        'X-Api-Key': OVERSEERR_APIKEY,
+    }
+
+    try:
+        r = requests.get(OVERSEERR_URL.rstrip('/') + '/api/v1/request',params=payload, headers=headers)
+        response = r.json()
+        logging.debug('get_sonarr_series response: ' + str(response))
+
+        logging.info('✅ Retrieved {} Overseerr media'.format(len(response)))
+        return response
+    except Exception as e:
+        logging.error('❌ Overseerr API \'media\' request failed: {0}'.format(e))
+
 def get_tautulli_libraries_table():
-    logging.info('📶 Retrieving Tautulli Libraries Table from Tautulli endpoint')
+    logging.info('📶 Retrieving Tautulli libraries from Tautulli endpoint')
 
     payload = {
         'apikey': TAUTULLI_APIKEY,
@@ -120,7 +156,10 @@ def get_tautulli_libraries_table():
         res_data = response['response']['data']['data']
         logging.debug('get_tautulli_libraries_table response: ' + str(res_data))
 
-        logging.info('✅ Retrieved {} Tautulli libraries table'.format(len(res_data)))
+        if len(res_data) == 0:
+            logging.warning('⚠️ No Tautulli libraries found')
+        else:
+            logging.info('✅ Retrieved {} Tautulli libraries'.format(len(res_data)))
         return res_data
     except Exception as e:
         logging.error("❌ Tautulli API 'get_libraries_table' request failed: {0}".format(e))
@@ -166,6 +205,9 @@ for library in tautulli_libraries_table:
 
 logging.debug('parse_tautulli_libraries_table response: ' + str(parsed_tautulli_libraries_table))
 logging.info("✅ Parsed {} 'get_tautulli_libraries_table' result".format(len(parsed_tautulli_libraries_table)))
+
+overseerr_media_list = get_overseerr_requests()
+print(overseerr_media_list)
 
 
 
