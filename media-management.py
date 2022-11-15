@@ -41,8 +41,9 @@ logging.basicConfig(level=logging.INFO)
 
 # CODE BELOW #
 
+
 def get_plex_libraries():
-    logging.info('📶 Retrieving Plex libraries from Plex endpoint')
+    logging.info('📦 Retrieving Plex libraries from Plex endpoint')
 
 
     payload = {
@@ -56,7 +57,7 @@ def get_plex_libraries():
 
         res_data = response['MediaContainer']['Directory']
         if len(res_data) == 0:
-            logging.warning('⚠️ No Plex libraries found')
+            logging.warning('🚧 No Plex libraries found')
         else:
             logging.info('✅ Retrieved {} Plex libraries'.format(len(res_data)))
         return res_data
@@ -75,7 +76,7 @@ def parse_plex_library_result(payload):
 
 
 def get_radarr_movies():
-    logging.info('📶 Retrieving Radarr movies from Radarr endpoint')
+    logging.info('📦 Retrieving Radarr movies from Radarr endpoint')
 
     payload = {
         'apikey': RADARR_APIKEY,
@@ -87,7 +88,7 @@ def get_radarr_movies():
         logging.debug('get_radarr_movies response: ' + str(response))
 
         if len(response) == 0:
-            logging.warning('⚠️ No Radarr movies found')
+            logging.warning('🚧 No Radarr movies found')
         else:
             logging.info('✅ Retrieved {} Radarr movies'.format(len(response)))
 
@@ -97,7 +98,7 @@ def get_radarr_movies():
 
 
 def get_sonarr_series():
-    logging.info('📶 Retrieving Sonarr series from Sonarr endpoint')
+    logging.info('📦 Retrieving Sonarr series from Sonarr endpoint')
 
     payload = {
         'apikey': SONARR_APIKEY,
@@ -109,7 +110,7 @@ def get_sonarr_series():
         logging.debug('get_sonarr_series response: ' + str(response))
 
         if len(response) == 0:
-            logging.warning('⚠️ No Sonarr series found')
+            logging.warning('🚧 No Sonarr series found')
         else:
             logging.info('✅ Retrieved {} Sonarr series'.format(len(response)))
 
@@ -119,7 +120,7 @@ def get_sonarr_series():
 
 
 def get_overseerr_requests():
-    logging.info('📶 Retrieving Overseerr media from Overseerr endpoint')
+    logging.info('📦 Retrieving Overseerr media from Overseerr endpoint')
 
     payload = {
         'take': 20,
@@ -142,7 +143,7 @@ def get_overseerr_requests():
         logging.error('❌ Overseerr API \'media\' request failed: {0}'.format(e))
 
 def get_tautulli_libraries_table():
-    logging.info('📶 Retrieving Tautulli libraries from Tautulli endpoint')
+    logging.info('📦 Retrieving Tautulli libraries from Tautulli endpoint')
 
     payload = {
         'apikey': TAUTULLI_APIKEY,
@@ -157,7 +158,7 @@ def get_tautulli_libraries_table():
         logging.debug('get_tautulli_libraries_table response: ' + str(res_data))
 
         if len(res_data) == 0:
-            logging.warning('⚠️ No Tautulli libraries found')
+            logging.warning('🚧 No Tautulli libraries found')
         else:
             logging.info('✅ Retrieved {} Tautulli libraries'.format(len(res_data)))
         return res_data
@@ -174,7 +175,7 @@ def parse_tautulli_libraries_table(payload):
     }
 
     if result['section_type'] == 'live':
-        logging.warning('⚠️ Skipping live section: {}'.format(result['section_name']))
+        logging.warning('🚧 Skipping live section: {}'.format(result['section_name']))
         return None
     return result
 
@@ -182,7 +183,7 @@ def parse_tautulli_libraries_table(payload):
 parsed_plex_libraries = []
 plex_libraries = get_plex_libraries()
 
-logging.info('📶 Parsing \'get_plex_libraries\' result')
+logging.info('📦 Parsing \'get_plex_libraries\' result')
 
 for library in plex_libraries:
     parsed_plex_libraries.append(parse_plex_library_result(library))
@@ -196,7 +197,7 @@ tautulli_libraries_table = get_tautulli_libraries_table()
 
 parsed_tautulli_libraries_table = []
 
-logging.info("📶 Parsing 'get_tautulli_libraries_table' result")
+logging.info("📦 Parsing 'get_tautulli_libraries_table' result")
 
 for library in tautulli_libraries_table:
     result = parse_tautulli_libraries_table(library)
