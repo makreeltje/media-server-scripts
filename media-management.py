@@ -59,7 +59,7 @@ def get_plex_libraries():
         if len(res_data) == 0:
             logging.warning('🚧 No Plex libraries found')
         else:
-            logging.info('✅ Retrieved {} Plex libraries'.format(len(res_data)))
+            logging.info('✅ Retrieved (\033[1m{}\033[0m) Plex libraries'.format(len(res_data)))
         return res_data
     except Exception as e:
         logging.error('❌ Plex API \'get_libraries\' request failed: {0}'.format(e))
@@ -90,7 +90,7 @@ def get_radarr_movies():
         if len(response) == 0:
             logging.warning('🚧 No Radarr movies found')
         else:
-            logging.info('✅ Retrieved {} Radarr movies'.format(len(response)))
+            logging.info('✅ Retrieved (\033[1m{}\033[0m) Radarr movies'.format(len(response)))
 
         return response
     except Exception as e:
@@ -112,7 +112,7 @@ def get_sonarr_series():
         if len(response) == 0:
             logging.warning('🚧 No Sonarr series found')
         else:
-            logging.info('✅ Retrieved {} Sonarr series'.format(len(response)))
+            logging.info('✅ Retrieved (\033[1m{}\033[0m) Sonarr series'.format(len(response)))
 
         return response
     except Exception as e:
@@ -135,21 +135,21 @@ def get_overseerr_requests():
     try:
         r = requests.get(OVERSEERR_URL.rstrip('/') + '/api/v1/request',params=payload, headers=headers)
         response = r.json()
-        logging.debug('get_sonarr_series response: ' + str(response))
+        logging.debug('get_overseerr_requests response: ' + str(response))
 
         results = response['pageInfo']['results']
         res_data = response['results']
-        print(type(res_data))
         while results > payload['skip']:
             payload['skip'] = payload['skip'] + 20
             r = requests.get(OVERSEERR_URL.rstrip('/') + '/api/v1/request', params=payload, headers=headers)
             response = r.json()
-            res_data.append(response['results'])
+            for result in response['results']:
+                res_data.append(result)
 
-        logging.info('✅ Retrieved {} Overseerr media'.format(len(res_data)))
-        return response
+        logging.info('✅ Retrieved (\033[1m{}\033[0m) Overseerr media'.format(len(res_data)))
+        return res_data
     except Exception as e:
-        logging.error('❌ Overseerr API \'media\' request failed: {0}'.format(e))
+        logging.error('❌ Overseerr API \'request\' request failed: {0}'.format(e))
 
 def get_tautulli_libraries_table():
     logging.info('📦 Retrieving Tautulli libraries from Tautulli endpoint')
@@ -169,7 +169,7 @@ def get_tautulli_libraries_table():
         if len(res_data) == 0:
             logging.warning('🚧 No Tautulli libraries found')
         else:
-            logging.info('✅ Retrieved {} Tautulli libraries'.format(len(res_data)))
+            logging.info('✅ Retrieved (\033[1m{}\033[0m) Tautulli libraries'.format(len(res_data)))
         return res_data
     except Exception as e:
         logging.error("❌ Tautulli API 'get_libraries_table' request failed: {0}".format(e))
@@ -184,7 +184,7 @@ def parse_tautulli_libraries_table(payload):
     }
 
     if result['section_type'] == 'live':
-        logging.warning('🚧 Skipping live section: {}'.format(result['section_name']))
+        logging.warning('🚧 Skipping live section: (\033[1m{}\033[0m)'.format(result['section_name']))
         return None
     return result
 
@@ -198,7 +198,7 @@ for library in plex_libraries:
     parsed_plex_libraries.append(parse_plex_library_result(library))
 
 logging.debug('parse_plex_library_result response: ' + str(parsed_plex_libraries))
-logging.info("✅ Parsed {} 'get_plex_libraries' result".format(len(plex_libraries)))
+logging.info("✅ Parsed (\033[1m{}\033[0m) 'get_plex_libraries' result".format(len(plex_libraries)))
 
 radarr_movie_list = get_radarr_movies()
 sonarr_series_list = get_sonarr_series()
@@ -214,10 +214,9 @@ for library in tautulli_libraries_table:
         parsed_tautulli_libraries_table.append(result)
 
 logging.debug('parse_tautulli_libraries_table response: ' + str(parsed_tautulli_libraries_table))
-logging.info("✅ Parsed {} 'get_tautulli_libraries_table' result".format(len(parsed_tautulli_libraries_table)))
+logging.info("✅ Parsed (\033[1m{}\033[0m) 'get_tautulli_libraries_table' result".format(len(parsed_tautulli_libraries_table)))
 
 overseerr_media_list = get_overseerr_requests()
-print(overseerr_media_list)
 
 
 
