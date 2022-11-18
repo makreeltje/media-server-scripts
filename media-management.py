@@ -137,7 +137,16 @@ def get_overseerr_requests():
         response = r.json()
         logging.debug('get_sonarr_series response: ' + str(response))
 
-        logging.info('✅ Retrieved {} Overseerr media'.format(len(response)))
+        results = response['pageInfo']['results']
+        res_data = response['results']
+        print(type(res_data))
+        while results > payload['skip']:
+            payload['skip'] = payload['skip'] + 20
+            r = requests.get(OVERSEERR_URL.rstrip('/') + '/api/v1/request', params=payload, headers=headers)
+            response = r.json()
+            res_data.append(response['results'])
+
+        logging.info('✅ Retrieved {} Overseerr media'.format(len(res_data)))
         return response
     except Exception as e:
         logging.error('❌ Overseerr API \'media\' request failed: {0}'.format(e))
