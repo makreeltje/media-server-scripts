@@ -1,0 +1,26 @@
+Tautulli movie result
+{
+   "section_id":9,
+   "section_type":"movie",
+   "added_at":"1581173052",
+   "media_type":"movie",
+   "rating_key":"87138",
+   "parent_rating_key":"",
+   "grandparent_rating_key":"",
+   "title":"Jojo Rabbit",
+   "sort_title":"Jojo Rabbit",
+   "year":"2019",
+   "media_index":"",
+   "parent_media_index":"",
+   "thumb":"/library/metadata/87138/thumb/1661654230",
+   "container":"mkv",
+   "bitrate":"2017",
+   "video_codec":"hevc",
+   "video_resolution":"1080",
+   "video_framerate":"24p",
+   "audio_codec":"aac",
+   "audio_channels":"6",
+   "file_size":"1643021629",
+   "last_played":1668376876,
+   "play_count":2
+}

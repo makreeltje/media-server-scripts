@@ -1,0 +1,26 @@
+Tautulli show result
+{
+   "section_id":13,
+   "section_type":"show",
+   "added_at":"1603057004",
+   "media_type":"show",
+   "rating_key":"69700",
+   "parent_rating_key":"",
+   "grandparent_rating_key":"",
+   "title":"The Walking Dead: World Beyond",
+   "sort_title":"Walking Dead: World Beyond",
+   "year":"2020",
+   "media_index":"1",
+   "parent_media_index":"",
+   "thumb":"/library/metadata/69700/thumb/1632649160",
+   "container":"",
+   "bitrate":"",
+   "video_codec":"",
+   "video_resolution":"",
+   "video_framerate":"",
+   "audio_codec":"",
+   "audio_channels":"",
+   "file_size":22725670209,
+   "last_played":1603060217,
+   "play_count":3
+}

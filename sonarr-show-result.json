@@ -1,0 +1,109 @@
+Sonarr show result
+{
+   "title":"The Walking Dead: World Beyond",
+   "alternateTitles":[
+      
+   ],
+   "sortTitle":"walking dead world beyond",
+   "status":"ended",
+   "ended":true,
+   "overview":"A heroic group of teens —\\xa0the first generation to be raised in the zombie apocalypse —\\xa0receive a message that inspires them to leave the safety of home to embark on a cross-country journey to save their father, and possibly the world.",
+   "previousAiring":"2021-11-29T03:00:00Z",
+   "network":"AMC",
+   "airTime":"22:00",
+   "images":[
+      {
+         "coverType":"banner",
+         "url":"/MediaCover/110/banner.jpg?lastWrite=637406044150000000",
+         "remoteUrl":"https://artworks.thetvdb.com/banners/series/372787/banners/5fa9ef47570ce.jpg"
+      },
+      {
+         "coverType":"poster",
+         "url":"/MediaCover/110/poster.jpg?lastWrite=637382685360000000",
+         "remoteUrl":"https://artworks.thetvdb.com/banners/series/372787/posters/5f821af8bef4e.jpg"
+      },
+      {
+         "coverType":"fanart",
+         "url":"/MediaCover/110/fanart.jpg?lastWrite=637382171270000000",
+         "remoteUrl":"https://artworks.thetvdb.com/banners/series/372787/backgrounds/5f7b794aadc54.jpg"
+      }
+   ],
+   "seasons":[
+      {
+         "seasonNumber":0,
+         "monitored":false,
+         "statistics":{
+            "episodeFileCount":0,
+            "episodeCount":0,
+            "totalEpisodeCount":4,
+            "sizeOnDisk":0,
+            "percentOfEpisodes":0.0
+         }
+      },
+      {
+         "seasonNumber":1,
+         "monitored":true,
+         "statistics":{
+            "previousAiring":"2020-11-30T03:46:00Z",
+            "episodeFileCount":10,
+            "episodeCount":10,
+            "totalEpisodeCount":10,
+            "sizeOnDisk":13336292594,
+            "percentOfEpisodes":100.0
+         }
+      },
+      {
+         "seasonNumber":2,
+         "monitored":true,
+         "statistics":{
+            "previousAiring":"2021-11-29T03:00:00Z",
+            "episodeFileCount":10,
+            "episodeCount":10,
+            "totalEpisodeCount":10,
+            "sizeOnDisk":9389377615,
+            "percentOfEpisodes":100.0
+         }
+      }
+   ],
+   "year":2020,
+   "path":"/series/The Walking Dead - World Beyond",
+   "qualityProfileId":6,
+   "languageProfileId":1,
+   "seasonFolder":true,
+   "monitored":true,
+   "useSceneNumbering":false,
+   "runtime":46,
+   "tvdbId":372787,
+   "tvRageId":0,
+   "tvMazeId":45194,
+   "firstAired":"2020-10-04T00:00:00Z",
+   "seriesType":"standard",
+   "cleanTitle":"thewalkingdeadworldbeyond",
+   "imdbId":"tt10148174",
+   "titleSlug":"the-walking-dead-world-beyond",
+   "rootFolderPath":"/series/",
+   "certification":"TV-MA",
+   "genres":[
+      "Action",
+      "Drama",
+      "Horror",
+      "Science Fiction"
+   ],
+   "tags":[
+      
+   ],
+   "added":"2020-10-13T20:18:46.230182Z",
+   "ratings":{
+      "votes":0,
+      "value":0.0
+   },
+   "statistics":{
+      "seasonCount":2,
+      "episodeFileCount":20,
+      "episodeCount":20,
+      "totalEpisodeCount":24,
+      "sizeOnDisk":22725670209,
+      "percentOfEpisodes":100.0
+   },
+   "id":110
+}

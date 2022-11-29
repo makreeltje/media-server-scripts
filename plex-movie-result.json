@@ -1,0 +1,95 @@
+Plex movie result
+{
+   "ratingKey":"87138",
+   "key":"/library/metadata/87138",
+   "guid":"plex://movie/5d777037f617c9002019c63b",
+   "studio":"Fox Searchlight Pictures",
+   "type":"movie",
+   "title":"Jojo Rabbit",
+   "contentRating":"PG-13",
+   "summary":"A World War II satire that follows a lonely German boy named Jojo (Roman Griffin Davis) whose world view is turned upside down when he discovers his single mother (Scarlett Johansson) is hiding a young Jewish girl (Thomasin McKenzie) in their attic. Aided only by his idiotic imaginary friend, Adolf Hitler (Taika Waititi), Jojo must confront his blind nationalism.",
+   "rating":8.0,
+   "audienceRating":9.4,
+   "year":2019,
+   "tagline":"An anti-hate satire.",
+   "thumb":"/library/metadata/87138/thumb/1667002542",
+   "art":"/library/metadata/87138/art/1667002542",
+   "duration":6503517,
+   "originallyAvailableAt":"2019-10-24",
+   "addedAt":1581173052,
+   "updatedAt":1667002542,
+   "audienceRatingImage":"rottentomatoes://image.rating.upright",
+   "chapterSource":"media",
+   "primaryExtraKey":"/library/metadata/79159",
+   "ratingImage":"rottentomatoes://image.rating.ripe",
+   "Media":[
+      {
+         "id":124871,
+         "duration":6503517,
+         "bitrate":2017,
+         "width":1920,
+         "height":1036,
+         "aspectRatio":1.85,
+         "audioChannels":6,
+         "audioCodec":"aac",
+         "videoCodec":"hevc",
+         "videoResolution":"1080",
+         "container":"mkv",
+         "videoFrameRate":"24p",
+         "audioProfile":"lc",
+         "videoProfile":"main 10",
+         "Part":[
+            {
+               "id":155095,
+               "key":"/library/parts/155095/1581984000/file.mkv",
+               "duration":6503517,
+               "file":"/data/movies/Jojo Rabbit (2019)/Jojo Rabbit (2019) [imdb-tt2584384][Bluray-1080p][AAC 5.1][h265]-Pahe.mkv",
+               "size":1643021629,
+               "audioProfile":"lc",
+               "container":"mkv",
+               "videoProfile":"main 10"
+            }
+         ]
+      }
+   ],
+   "Genre":[
+      {
+         "tag":"Comedy"
+      },
+      {
+         "tag":"Drama"
+      }
+   ],
+   "Director":[
+      {
+         "tag":"Taika Waititi"
+      }
+   ],
+   "Writer":[
+      {
+         "tag":"Taika Waititi"
+      },
+      {
+         "tag":"Christine Leunens"
+      }
+   ],
+   "Country":[
+      {
+         "tag":"Czech Republic"
+      },
+      {
+         "tag":"New Zealand"
+      }
+   ],
+   "Role":[
+      {
+         "tag":"Roman Griffin Davis"
+      },
+      {
+         "tag":"Thomasin McKenzie"
+      },
+      {
+         "tag":"Scarlett Johansson"
+      }
+   ]
+}

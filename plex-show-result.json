@@ -1,0 +1,51 @@
+Plex show result
+{
+   "ratingKey":"69700",
+   "key":"/library/metadata/69700/children",
+   "guid":"plex://show/5e1618f5d62a3d003e494b18",
+   "studio":"AMC Networks",
+   "type":"show",
+   "title":"The Walking Dead: World Beyond",
+   "titleSort":"Walking Dead: World Beyond",
+   "contentRating":"TV-MA",
+   "summary":"A heroic group of teens sheltered from the dangers of the post-apocalyptic world receive a message that inspires them to leave the safety of the only home they have ever known and embark on a cross-country journey to find the one man who can possibly save the world.",
+   "index":1,
+   "audienceRating":7.6,
+   "year":2020,
+   "thumb":"/library/metadata/69700/thumb/1668914595",
+   "art":"/library/metadata/69700/art/1668914595",
+   "theme":"/library/metadata/69700/theme/1668914595",
+   "duration":2580000,
+   "originallyAvailableAt":"2020-10-01",
+   "leafCount":20,
+   "viewedLeafCount":0,
+   "childCount":2,
+   "addedAt":1603057004,
+   "updatedAt":1668914595,
+   "audienceRatingImage":"themoviedb://image.rating",
+   "primaryExtraKey":"/library/metadata/82764",
+   "Genre":[
+      {
+         "tag":"Drama"
+      },
+      {
+         "tag":"Horror"
+      }
+   ],
+   "Country":[
+      {
+         "tag":"United States of America"
+      }
+   ],
+   "Role":[
+      {
+         "tag":"Aliyah Royale"
+      },
+      {
+         "tag":"Alexa Mansour"
+      },
+      {
+         "tag":"Hal Cumpston"
+      }
+   ]
+}
