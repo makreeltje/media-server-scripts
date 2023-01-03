@@ -8,6 +8,8 @@ from __future__ import print_function
 from __future__ import unicode_literals
 
 import logging
+import re
+from datetime import time
 
 import requests
 from os import environ
@@ -116,6 +118,22 @@ def get_radarr_movies():
         return response
     except Exception as e:
         logging.error('❌ Radarr API \'movie\' request failed: {0}'.format(e))
+
+
+def remove_radarr_movies_without_files(radarr_movie_list):
+    logging.info('📦 Removing Radarr movies without files')
+
+    items_to_remove = []
+
+    for radarr_item in radarr_movie_list:
+        if 'movieFile' not in radarr_item:
+            items_to_remove.append(radarr_item)
+
+    for item in items_to_remove:
+        radarr_movie_list.remove(item)
+        logging.debug('✅ Removed {} from Radarr movie list'.format(item['title']))
+
+    return radarr_movie_list
 
 
 def get_sonarr_series():
@@ -252,7 +270,7 @@ def merge_plex_tautulli_media_info(tautulli_media_info, plex_media_info, library
 
     for plex_media in plex_media_info:
         for tautulli_media in tautulli_media_info:
-            if tautulli_media['rating_key'] == plex_media['ratingKey']:
+            if reformat_name(tautulli_media['title']) == reformat_name(plex_media['title']):
                 if library['section_type'] == 'movie':
                     merged_media_info.append(merge_plex_tautulli_movie_media_info(tautulli_media, plex_media))
                 elif library['section_type'] == 'show':
@@ -261,11 +279,19 @@ def merge_plex_tautulli_media_info(tautulli_media_info, plex_media_info, library
 
     logging.debug('merge_plex_tautulli_media_info response: ' + str(merged_media_info))
     logging.info('✅ Merged {} Plex and Tautulli media info'.format(library['section_name']))
+    return merged_media_info
+
+
+def reformat_name(name):
+    name = name.lower()
+    name = re.sub('[^a-zA-Z0-9\n\.]', '', name)
+    return name
+
 
 def merge_plex_tautulli_movie_media_info(tautulli_media, plex_media):
     result = {
         'title': plex_media['title'],
-        'rating_key': plex_media['ratingKey'],
+        'rating_key': tautulli_media['rating_key'],
         'added_at': tautulli_media['added_at'],
         'last_played': tautulli_media['last_played'],
         'file_size': tautulli_media['file_size'],
@@ -284,10 +310,46 @@ def merge_plex_tautulli_show_media_info(tautulli_media, plex_media):
         'file_size': tautulli_media['file_size'],
 
     }
-    if tautulli_media['title'] == 'The Walking Dead: World Beyond':
-        print(plex_media)
     logging.debug('merge_plex_tautulli_movie_media_info response: ' + str(result))
+    return result
 
+
+def merge_merged_list_radarr_media_info(merged_list, radarr_movie_list):
+    logging.info('📦 Merging {} merged list and Radarr media info'.format(library['section_name']))
+    merged_media_info = []
+
+    for merged_item in merged_list:
+        for radarr_item in radarr_movie_list:
+
+            if merged_item['file_name'] == radarr_item['movieFile']['relativePath']:
+                merged_item['tmdb_id'] = radarr_item['tmdbId']
+                merged_item['imdb_id'] = radarr_item['imdbId']
+                merged_item['radarr_id'] = radarr_item['id']
+                merged_media_info.append(merged_item)
+                break
+    logging.info('📦 Merged {} merged list and Radarr media info'.format(library['section_name']))
+    return merged_media_info
+
+
+def merge_merged_list_sonarr_media_info(merged_list, sonarr_series_list):
+    logging.info('📦 Merging {} merged list and Sonarr media info'.format(library['section_name']))
+    merged_media_info = []
+    # for merged_item in merged_list:
+        # for sonarr_item in sonarr_series_list:
+
+
+def filter_merged_list_based_on_remove_limit(merged_media_info):
+    logging.info('📦 Filtering {} merged list based on remove limit'.format(library['section_name']))
+    filtered_media_info = []
+    epoch_now = int(time.time())
+    epoch_remove_limit = epoch_now - (REMOVE_LIMIT * 86400)
+    for media in merged_media_info:
+        if media['last_played'] is None:
+
+
+        if media['added_at'] < REMOVE_LIMIT:
+            filtered_media_info.append(media)
+    return None
 
 
 # Plex logic
@@ -304,6 +366,7 @@ logging.info("✅ Parsed {} 'get_plex_libraries' result".format(len(plex_librari
 
 # Radarr logic
 radarr_movie_list = get_radarr_movies()
+radarr_movie_list = remove_radarr_movies_without_files(radarr_movie_list)
 
 # Sonarr logic
 sonarr_series_list = get_sonarr_series()
@@ -327,7 +390,15 @@ logging.info("✅ Parsed {} 'get_tautulli_libraries_table' result".format(len(pa
 for library in parsed_tautulli_libraries_table:
     tautulli_library_media_info = get_tautulli_library_media_info(library)
     plex_library_media_info = get_plex_media_info(library)
-    merge_plex_tautulli_media_info(tautulli_library_media_info, plex_library_media_info, library)
+    merged_media = merge_plex_tautulli_media_info(tautulli_library_media_info, plex_library_media_info, library)
+
+    if library['section_type'] == 'movie':
+        merged_media = merge_merged_list_radarr_media_info(merged_media, radarr_movie_list)
+        merged_media = filter_merged_list_based_on_remove_limit(merged_media)
+        logging.info('📦 Merging {} merged list and Radarr media info'.format(library['section_name']))
+
+    elif library['section_type'] == 'show':
+        merge_merged_list_sonarr_media_info(merged_media, sonarr_series_list)
 
 
 
