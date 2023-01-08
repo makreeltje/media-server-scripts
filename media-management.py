@@ -327,7 +327,7 @@ def merge_merged_list_radarr_media_info(merged_list, radarr_movie_list):
                 merged_item['radarr_id'] = radarr_item['id']
                 merged_media_info.append(merged_item)
                 break
-    logging.info('📦 Merged {} merged list and Radarr media info'.format(library['section_name']))
+    logging.info('✅ Merged {} merged list and Radarr media info'.format(library['section_name']))
     return merged_media_info
 
 
@@ -346,9 +346,6 @@ def filter_merged_list_based_on_remove_limit(merged_media_info):
     for media in merged_media_info:
         if media['last_played'] is None:
 
-
-        if media['added_at'] < REMOVE_LIMIT:
-            filtered_media_info.append(media)
     return None
 
 
