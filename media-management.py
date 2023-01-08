@@ -7,6 +7,7 @@
 from __future__ import print_function
 from __future__ import unicode_literals
 
+import datetime
 import logging
 import re
 from datetime import time
@@ -31,7 +32,7 @@ TAUTULLI_APIKEY = environ.get('TAUTULLI_APIKEY')
 
 LIBRARY_NAMES = ['Movies', 'TV Shows', 'Animation', 'Series']
 
-REMOVE_LIMIT = 30  # Days
+REMOVE_LIMIT = 365*3  # Days
 DRY_RUN = True
 
 headers = {
@@ -340,13 +341,22 @@ def merge_merged_list_sonarr_media_info(merged_list, sonarr_series_list):
 
 def filter_merged_list_based_on_remove_limit(merged_media_info):
     logging.info('📦 Filtering {} merged list based on remove limit'.format(library['section_name']))
-    filtered_media_info = []
-    epoch_now = int(time.time())
-    epoch_remove_limit = epoch_now - (REMOVE_LIMIT * 86400)
+
+    remove_list = []
+
     for media in merged_media_info:
         if media['last_played'] is None:
+            date_to = datetime.datetime.fromtimestamp(int(media['added_at']))
+        else:
+            date_to = datetime.datetime.fromtimestamp(int(media['last_played']))
 
-    return None
+        date_from = datetime.datetime.now()
+
+        if (date_from - date_to).days > REMOVE_LIMIT:
+            remove_list.append(media)
+
+    logging.info('✅ Filtered {} merged list based on remove limit'.format(library['section_name']))
+    return remove_list
 
 
 # Plex logic
