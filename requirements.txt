@@ -1,4 +1,4 @@
 requests
-plexapi
-urllib3
-python-dotenv
+plexapi==4.15.9
+urllib3==2.2.0
+python-dotenv==1.0.1
