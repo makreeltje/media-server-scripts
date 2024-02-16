@@ -21,7 +21,7 @@ TAUTULLI_URL = os.getenv('TAUTULLI_URL')
 TAUTULLI_APIKEY = os.getenv('TAUTULLI_APIKEY')
 
 DRY_RUN = True
-PLEX_LIBRARY_NAMES = ['Movies', 'TV Shows', 'Animation', 'Series']
+PLEX_LIBRARY_NAMES = ['Series']
 PATH_TO_CHECK = '/data'
 SERVICE_TO_CHECK_FREE_DISKSPACE = 'sonarr' # sonarr/radarr
 FREE_SPACE_THRESHOLD = 200 # Threshold in GB
@@ -102,20 +102,28 @@ def get_freespace_on_specified_path(data, path):
             return object['freeSpace']
 
 
-def start():
+def get_external_ids(library_item):
+    guids_dict = {}
+    for guid in library_item.guids:
+        parts = guid.id.split('://')
+        if len(parts) == 2:
+            key = parts[0]
+            value = parts[1][:-1]
+            guids_dict[key] = value
+    return guids_dict
 
+
+def start():
     plex = setup_server(PLEX_URL, PLEX_TOKEN)
     full_library_metadata: list[Any] = []
     for library_name in PLEX_LIBRARY_NAMES:
         full_library_metadata.extend(get_plex_libraries_metadata(plex, library_name))
     sorted_full_library_metadata = sorted(full_library_metadata, key=sort_library_metadata, reverse=False)
     for library_item in sorted_full_library_metadata:
-        guids_str = ' '.join(
-            [guid.id.split('//')[1][:-1] for guid in library_item.guids]) if library_item.guids else "N/A"
         if library_item.lastViewedAt is not None:
-            print(f"{library_item.lastViewedAt}, LVA, {guids_str}")
+            print(f"{library_item.lastViewedAt}, LVA, {get_external_ids(library_item)}")
         else:
-            print(f"{library_item.addedAt}, AA, {guids_str}")
+            print(f"{library_item.addedAt}, AA, {get_external_ids(library_item)}")
     print('pannenkoek')
 
 
