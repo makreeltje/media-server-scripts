@@ -16,11 +16,11 @@ RADARR_APIKEY = os.getenv('RADARR_APIKEY')
 SONARR_URL = os.getenv('SONARR_URL')
 SONARR_APIKEY = os.getenv('SONARR_APIKEY')
 
-DRY_RUN = True
+DRY_RUN = False
 PLEX_LIBRARY_NAMES = ['Series', 'Movies', 'Animation', 'TV Shows']
 PATH_TO_CHECK = '/data'
 SERVICE_TO_CHECK_FREE_DISKSPACE = 'sonarr'  # sonarr/radarr
-FREE_SPACE_THRESHOLD = 200  # Threshold in GB
+FREE_SPACE_THRESHOLD = 500  # Threshold in GB
 
 logging.root.setLevel(logging.NOTSET)
 logging.basicConfig(level=logging.INFO)
@@ -172,9 +172,9 @@ def delete_radarr_movie(movie):
     }
 
     try:
-        r = requests.delete(SONARR_URL.rstrip('/') + '/api/v3/movie/{}'.format(movie['id']), params=payload)
+        r = requests.delete(RADARR_URL.rstrip('/') + '/api/v3/movie/{}'.format(movie['id']), params=payload)
         response = r.json()
-        logging.debug('delete_sonarr_show response: ' + str(response))
+        logging.debug('delete_radarr_movie response: ' + str(response))
 
         if r.status_code != 200:
             logging.warning('🚧 No Radarr show found')
