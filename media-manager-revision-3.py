@@ -1,6 +1,6 @@
 import logging
 import os
-from typing import List, Any
+from typing import Any
 
 import requests
 from dotenv import load_dotenv
@@ -15,10 +15,6 @@ RADARR_URL = os.getenv('RADARR_URL')
 RADARR_APIKEY = os.getenv('RADARR_APIKEY')
 SONARR_URL = os.getenv('SONARR_URL')
 SONARR_APIKEY = os.getenv('SONARR_APIKEY')
-OVERSEERR_URL = os.getenv('OVERSEERR_URL')
-OVERSEERR_APIKEY = os.getenv('OVERSEERR_APIKEY')
-TAUTULLI_URL = os.getenv('TAUTULLI_URL')
-TAUTULLI_APIKEY = os.getenv('TAUTULLI_APIKEY')
 
 DRY_RUN = True
 PLEX_LIBRARY_NAMES = ['Series', 'Movies', 'Animation', 'TV Shows']
@@ -266,7 +262,10 @@ def start():
     for item in full_library_metadata:
         history = get_full_plex_history(plex, item.ratingKey)
         if len(history) > 0:
-            item.lastViewedAt = history[0].viewedAt
+            if item.addedAt > history[0].viewedAt:
+                item.lastViewedAt = item.addedAt
+            else:
+                item.lastViewedAt = history[0].viewedAt
         else:
             item.lastViewedAt = item.addedAt
     sorted_full_library_metadata = sorted(full_library_metadata, key=sort_library_metadata, reverse=False)
